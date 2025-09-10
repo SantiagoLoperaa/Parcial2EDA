@@ -1,21 +1,52 @@
-from model.nodo import Nodo as Node
-class LinkedList:
+from model.nodo import Nodo
+
+class ListaEnlazada:
     def __init__(self):
-        self.head = None
+        self.cabeza = None
 
-    def append(self, data):
-        nuevo_nodo = Node(data)
-        if not self.head:
-            self.head = nuevo_nodo
+    def insertarFinal(self, dato):
+        nuevoNodo = Nodo(dato)
+        if not self.cabeza:
+            self.cabeza = nuevoNodo
             return
-        last = self.head
-        while last.siguiente:
-            last = last.siguiente
-        last.siguiente = nuevo_nodo
+        ultimo = self.cabeza
+        while ultimo.siguiente:
+            ultimo = ultimo.siguiente
+        ultimo.siguiente = nuevoNodo
 
-    def display(self):
-        current = self.head
-        while current:
-            print(current.dato, end=" -> ")
-            current = current.siguiente
-        print("None")
+    def aLista(self):
+        datos = []
+        actual = self.cabeza
+        while actual:
+            datos.append(actual.dato)
+            actual = actual.siguiente
+        return datos
+
+    def rotarLista(self):
+        nodoAux = Nodo(0)
+        nodoAux.siguiente = self.cabeza
+        previo = nodoAux
+        while previo.siguiente and previo.siguiente.siguiente:
+            primero = previo.siguiente
+            segundo = primero.siguiente
+
+            # Reenlazar
+            previo.siguiente = segundo
+            primero.siguiente = segundo.siguiente
+            segundo.siguiente = primero
+
+            previo = primero
+        self.cabeza = nodoAux.siguiente
+
+    # --- Rotación recursiva ---
+    def _rotarRec(self, nodo):
+        if not nodo or not nodo.siguiente:
+            return nodo
+        primero = nodo
+        segundo = nodo.siguiente
+        primero.siguiente = self._rotarRec(segundo.siguiente)
+        segundo.siguiente = primero
+        return segundo
+
+    def rotarListaRec(self):
+        self.cabeza = self._rotarRec(self.cabeza)
